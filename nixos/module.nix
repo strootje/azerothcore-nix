@@ -7,10 +7,10 @@
 }:
 
 let
-  cfg = config.services.acore;
+  cfg = config.services.azerothcore;
 in
 {
-  options.services.acore = {
+  options.services.azerothcore = {
     enable = lib.mkEnableOption "AzerothCore";
 
     package = lib.mkOption {
@@ -24,32 +24,42 @@ in
     users.users.acore = {
       isSystemUser = true;
       group = "acore";
-      home = "/var/lib/acore";
+      home = "/var/lib/azerothcore";
     };
 
-    environment.etc."acore/authserver.conf".source = "${cfg.package}/etc/authserver.conf.dist";
-    environment.etc."acore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
+    environment.etc."azerothcore/authserver.conf".source = "${cfg.package}/etc/authserver.conf.dist";
+    environment.etc."azerothcore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
 
     systemd.services.auhtserver = {
-      User = "acore";
-      Group = "acore";
+      description = "AzerothCore AuthServer";
+      wantedBy = [ "multi-user.target" ];
 
-      StateDirectory = "acore";
-      WorkingDirectory = "/var/lib/acore";
+      serviceConfig = {
+        User = "acore";
+        Group = "acore";
 
-      ExecStart = "${cfg.package}/bin/authserver";
-      Restart = "always";
+        StateDirectory = "azerothcore";
+        WorkingDirectory = "/var/lib/azerothcore";
+
+        ExecStart = "${cfg.package}/bin/authserver";
+        Restart = "always";
+      };
     };
 
     systemd.services.worldserver = {
-      User = "acore";
-      Group = "acore";
+      description = "AzerothCore WorldServer";
+      wantedBy = [ "multi-user.target" ];
 
-      StateDirectory = "acore";
-      WorkingDirectory = "/var/lib/acore";
+      serviceConfig = {
+        User = "acore";
+        Group = "acore";
 
-      ExecStart = "${cfg.package}/bin/worldserver";
-      Restart = "always";
+        StateDirectory = "azerothcore";
+        WorkingDirectory = "/var/lib/azerothcore";
+
+        ExecStart = "${cfg.package}/bin/worldserver";
+        Restart = "always";
+      };
     };
   };
 }
