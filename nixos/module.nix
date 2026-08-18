@@ -76,13 +76,13 @@ in
     };
 
     environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.authDatabase}";
 
     };
     environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
-      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};;${cfg.database.worldDatabase}";
-      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};;${cfg.database.characterDatabase}";
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.authDatabase}";
+      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.worldDatabase}";
+      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.characterDatabase}";
     };
 
     services.mysql = lib.mkIf cfg.database.managed {
@@ -107,7 +107,7 @@ in
       ];
     };
 
-    systemd.services.auhtserver = {
+    systemd.services.authserver = {
       description = "AzerothCore AuthServer";
       wantedBy = [ "multi-user.target" ];
 
