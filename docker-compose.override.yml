@@ -1,4 +1,0 @@
-services:
-  ac-worldserver:
-    volumes:
-      - ./modules:/azerothcore/modules:ro

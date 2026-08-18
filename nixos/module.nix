@@ -90,10 +90,10 @@ in
       WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
       CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
       MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-      SourceDirectory = "${cfg.package}/data";
-      "Updates.EnableDatabases" = "7";
-      "Updates.AllowedModules" = "all";
-      "Updates.AutoSetup" = "1";
+      SourceDirectory = "${cfg.package}";
+      # "Updates.EnableDatabases" = "7";
+      # "Updates.AllowedModules" = "all";
+      # "Updates.AutoSetup" = "1";
     };
 
     services.mysql = lib.mkIf cfg.database.managed {
