@@ -8,6 +8,7 @@
 
 let
   cfg = config.services.azerothcore;
+  tomlFormat = pkgs.formats.toml { };
 in
 {
   options.services.azerothcore = {
@@ -68,8 +69,29 @@ in
       home = "/var/lib/azerothcore";
     };
 
-    environment.etc."azerothcore/authserver.conf".source = "${cfg.package}/etc/authserver.conf.dist";
-    environment.etc."azerothcore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
+    # environment.etc."azerothcore/authserver.conf".source = "${cfg.package}/etc/authserver.conf.dist";
+    # environment.etc."azerothcore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
+
+    environment.etc."azerothcore/authserver.conf".source = tomlFormat.generate "authserver.toml" (
+      lib.recursiveUpdate (
+        builtins.fromTOML (builtins.readFile "${cfg.package}/etc/authserver.conf.dist") {
+          authserver = {
+            LoginDatabaseInfo = "localhost;3306;acore;;acore_auth";
+          };
+        }
+      )
+    );
+    environment.etc."azerothcore/worldserver.conf".source = tomlFormat.generate "worldserver.toml" (
+      lib.recursiveUpdate (
+        builtins.fromTOML (builtins.readFile "${cfg.package}/etc/worldserver.conf.dist") {
+          authserver = {
+            LoginDatabaseInfo = "localhost;3306;acore;;acore_auth";
+            WorldDatabaseInfo = "127.0.0.1;3306;acore;;acore_world";
+            CharacterDatabaseInfo = "127.0.0.1;3306;acore;;acore_characters";
+          };
+        }
+      )
+    );
 
     services.mysql = lib.mkIf cfg.database.managed {
       package = pkgs.mariadb;
