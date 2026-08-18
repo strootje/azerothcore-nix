@@ -75,18 +75,16 @@ in
       home = "/var/lib/azerothcore";
     };
 
-    # environment.etc."azerothcore/authserver.conf".source = "${cfg.package}/etc/authserver.conf.dist";
-    # environment.etc."azerothcore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
-
-    environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
-
-    };
-    environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
-      WorldDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.worldDatabase}";
-      CharacterDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.characterDatabase}";
-    };
+    environment.etc."azerothcore/authserver.conf".text = ''
+      [authserver]
+      LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}"
+    '';
+    environment.etc."azerothcore/worldserver.conf".text = ''
+      [worldserver]
+      LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}"
+      WorldDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.worldDatabase}"
+      CharacterDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.characterDatabase}"
+    '';
 
     services.mysql = lib.mkIf cfg.database.managed {
       package = pkgs.mariadb;
