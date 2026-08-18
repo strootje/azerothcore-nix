@@ -14,7 +14,7 @@ let
     ''
       [${section}]
     ''
-    ++ lib.concatLines (lib.mapAttrsToList (name: value: "${name} = \"${toString value}\"")) settings;
+    ++ lib.concatLines (lib.mapAttrsToList (name: value: "${name} = \"${toString value}\"") settings);
 in
 {
   options.services.azerothcore = {
