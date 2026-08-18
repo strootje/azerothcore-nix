@@ -118,7 +118,7 @@ in
         StateDirectory = "azerothcore";
         WorkingDirectory = "/var/lib/azerothcore";
 
-        ExecStartPre = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf -d";
+        # ExecStartPre = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf -d";
         ExecStart = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf";
         Restart = "always";
       };
@@ -135,7 +135,7 @@ in
         StateDirectory = "azerothcore";
         WorkingDirectory = "/var/lib/azerothcore";
 
-        ExecStartPre = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf -d";
+        # ExecStartPre = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf -d";
         ExecStart = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf";
         Restart = "always";
       };
