@@ -84,6 +84,11 @@ in
       WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.worldDatabase}";
       CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.characterDatabase}";
     };
+    environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" {
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.authDatabase}";
+      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.worldDatabase}";
+      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.characterDatabase}";
+    };
 
     services.mysql = lib.mkIf cfg.database.managed {
       package = pkgs.mariadb;
@@ -107,7 +112,36 @@ in
       ];
     };
 
-    systemd.services.authserver = {
+    systemd.services.ac-db-import = {
+      description = "AzerothCore DbImport";
+
+      wantedBy = [ "multi-user.target" ];
+      requires = [ "mysql.service" ];
+      after = [ "mysql.service" ];
+
+      before = [
+        "ac-authserver.service"
+        "ac-worldserver.service"
+      ];
+
+      serviceConfig = {
+        Type = "oneshot";
+
+        User = "acore";
+        Group = "acore";
+
+        StateDirectory = "azerothcore";
+        WorkingDirectory = "/var/lib/azerothcore";
+
+        # ExecStartPre = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf -d";
+        ExecStart = "${cfg.package}/bin/dbimport -c /etc/azerothcore/dbimport.conf";
+
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+    };
+
+    systemd.services.ac-authserver = {
       description = "AzerothCore AuthServer";
 
       wantedBy = [ "multi-user.target" ];
@@ -131,7 +165,7 @@ in
       };
     };
 
-    systemd.services.worldserver = {
+    systemd.services.ac-worldserver = {
       description = "AzerothCore WorldServer";
 
       wantedBy = [ "multi-user.target" ];
