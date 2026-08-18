@@ -9,6 +9,13 @@
 let
   cfg = config.services.azerothcore;
   tomlFormat = pkgs.formats.toml { };
+
+  defaultAuthSettings = (
+    builtins.fromTOML (builtins.readFile "${cfg.package}/etc/authserver.conf.dist")
+  );
+  defaultWorldSettings = (
+    builtins.fromTOML (builtins.readFile "${cfg.package}/etc/worldserver.conf.dist")
+  );
 in
 {
   options.services.azerothcore = {
@@ -73,24 +80,20 @@ in
     # environment.etc."azerothcore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
 
     environment.etc."azerothcore/authserver.conf".source = tomlFormat.generate "authserver.toml" (
-      lib.recursiveUpdate (
-        (builtins.fromTOML (builtins.readFile "${cfg.package}/etc/authserver.conf.dist")) {
-          authserver = {
-            LoginDatabaseInfo = "localhost;3306;acore;;acore_auth";
-          };
-        }
-      )
+      lib.recursiveUpdate (defaultAuthSettings {
+        authserver = {
+          LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
+        };
+      })
     );
     environment.etc."azerothcore/worldserver.conf".source = tomlFormat.generate "worldserver.toml" (
-      lib.recursiveUpdate (
-        (builtins.fromTOML (builtins.readFile "${cfg.package}/etc/worldserver.conf.dist")) {
-          authserver = {
-            LoginDatabaseInfo = "localhost;3306;acore;;acore_auth";
-            WorldDatabaseInfo = "127.0.0.1;3306;acore;;acore_world";
-            CharacterDatabaseInfo = "127.0.0.1;3306;acore;;acore_characters";
-          };
-        }
-      )
+      lib.recursiveUpdate (defaultWorldSettings {
+        worldserver = {
+          LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
+          WorldDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.worldDatabase}";
+          CharacterDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.characterDatabase}";
+        };
+      })
     );
 
     services.mysql = lib.mkIf cfg.database.managed {
