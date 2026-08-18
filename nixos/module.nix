@@ -15,6 +15,7 @@ let
       [${section}]
     ''
     + lib.concatLines (lib.mapAttrsToList (name: value: "${name} = \"${toString value}\"") settings);
+  databasePasswd = "acore";
 in
 {
   options.services.azerothcore = {
@@ -76,18 +77,19 @@ in
     };
 
     environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.authDatabase}";
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
 
     };
     environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.authDatabase}";
-      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.worldDatabase}";
-      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.characterDatabase}";
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
+      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
     };
     environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.authDatabase}";
-      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.worldDatabase}";
-      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};acore;${cfg.database.characterDatabase}";
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
+      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
+      MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
     };
 
     services.mysql = lib.mkIf cfg.database.managed {
@@ -111,6 +113,20 @@ in
         }
       ];
     };
+
+    # systemd.services.ac-update-user = {
+    #   serviceConfig.Type = "oneshot";
+    #   wantedBy = [ "multi-user.target" ];
+    #   requires = [ "mysql.service" ];
+    #   after = [ "mysql.service" ];
+
+    #   script = ''
+    #     ${pkgs.mysql84}/bin/mysql <<EOF
+    #       ALTER USER '${cfg.database.user}'@'localhost' IDENTIFIED BY '${databasePasswd}';
+    #       FLUSH PRIVILEGES;
+    #     EOF
+    #   '';
+    # };
 
     systemd.services.ac-db-import = {
       description = "AzerothCore DbImport";
