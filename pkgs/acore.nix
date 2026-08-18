@@ -57,4 +57,8 @@ clangStdenv.mkDerivation rec {
     readline
     ncurses
   ];
+
+  postInstall = ''
+    cp -r ${src}/data $out/
+  '';
 }
