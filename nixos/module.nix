@@ -15,7 +15,7 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = self.packages.${pkgs.system}.acore;
+      default = self.packages.${pkgs.stdenv.hostPlatform.system}.acore;
     };
   };
 
@@ -104,7 +104,8 @@ in
         StateDirectory = "azerothcore";
         WorkingDirectory = "/var/lib/azerothcore";
 
-        ExecStart = "${cfg.package}/bin/authserver";
+        ExecStartPre = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf -d";
+        ExecStart = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf";
         Restart = "always";
       };
     };
@@ -120,7 +121,8 @@ in
         StateDirectory = "azerothcore";
         WorkingDirectory = "/var/lib/azerothcore";
 
-        ExecStart = "${cfg.package}/bin/worldserver";
+        ExecStartPre = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf -d";
+        ExecStart = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf";
         Restart = "always";
       };
     };
