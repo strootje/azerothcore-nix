@@ -36,6 +36,15 @@ clangStdenv.mkDerivation rec {
     git
   ];
 
+  cmakeFlags = [
+    "-DAPPS_BUILD=all"
+    "-DTOOLS_BUILD=all"
+    "-DSCRIPTS=static"
+    "-DMODULES=static"
+    "-DWITH_WARNINGS=ON"
+    # "-DBoost_USE_STATIC_LIBS=ON"
+  ];
+
   buildInputs = [
     boost
     openssl
