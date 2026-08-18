@@ -10,20 +10,18 @@
   };
 
   outputs =
-    inputs@{ flake-parts, ... }:
+    inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
 
-      perSystem =
-        { pkgs, ... }:
-        let
-          acore = pkgs.callPackage pkgs/acore.nix { };
-        in
-        {
-          packages = {
-            inherit acore;
-            default = acore;
-          };
+      perSystem = { pkgs, ... }: {
+        packages = {
+          default = pkgs.callPackage pkgs/acore.nix { };
         };
+      };
+
+      flake.nixosModules.default = import nixos/module.nix {
+        inherit self;
+      };
     };
 }
