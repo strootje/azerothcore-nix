@@ -68,6 +68,13 @@ in
     };
   };
 
+  options.services.azerothcore.clientData = {
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = self.packages.${pkgs.stdenv.hostPlatform.system}.client-data;
+    };
+  };
+
   config = lib.mkIf cfg.enable {
     users.groups.acore = { };
     users.users.acore = {
@@ -76,24 +83,42 @@ in
       home = "/var/lib/azerothcore";
     };
 
-    environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+    systemd.tmpfiles.rules = [
+      "L+ /var/lib/azerothcore/data - - - - ${cfg.clientData.package}"
+    ];
 
-    };
-    environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
-      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
-      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
-    };
     environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" {
       LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
       WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
       CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
+
       MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-      SourceDirectory = "${cfg.package}";
-      # "Updates.EnableDatabases" = "7";
-      # "Updates.AllowedModules" = "all";
-      # "Updates.AutoSetup" = "1";
+      SourceDirectory = "${cfg.package}/src";
+      TempDir = "/var/cache/azerothcore";
+      LogsDir = "/var/logs/azerothcore";
+    };
+
+    environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+      "Updates.EnableDatabases" = "0";
+
+      MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
+      SourceDirectory = "${cfg.package}/src";
+      TempDir = "/var/cache/azerothcore";
+      LogsDir = "/var/logs/azerothcore";
+    };
+
+    environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" {
+      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
+      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
+      "Updates.EnableDatabases" = "0";
+
+      MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
+      SourceDirectory = "${cfg.package}/src";
+      DataDir = "/var/lib/azerothcore/data";
+      TempDir = "/var/cache/azerothcore";
+      LogsDir = "/var/logs/azerothcore";
     };
 
     services.mysql = lib.mkIf cfg.database.managed {
@@ -118,42 +143,61 @@ in
       ];
     };
 
-    # systemd.services.ac-update-user = {
-    #   serviceConfig.Type = "oneshot";
-    #   wantedBy = [ "multi-user.target" ];
-    #   requires = [ "mysql.service" ];
-    #   after = [ "mysql.service" ];
+    systemd.services.ac-fix-dbuser = {
+      description = "AzerothCore DbUser";
 
-    #   script = ''
-    #     ${pkgs.mysql84}/bin/mysql <<EOF
-    #       ALTER USER '${cfg.database.user}'@'localhost' IDENTIFIED BY '${databasePasswd}';
-    #       FLUSH PRIVILEGES;
-    #     EOF
-    #   '';
-    # };
+      wantedBy = [
+        "multi-user.target"
+      ];
 
-    systemd.services.ac-db-import = {
-      description = "AzerothCore DbImport";
-
-      wantedBy = [ "multi-user.target" ];
-      requires = [ "mysql.service" ];
-      after = [ "mysql.service" ];
-
-      before = [
-        "ac-authserver.service"
-        "ac-worldserver.service"
+      requires = [
+        "mysql.service"
+      ];
+      after = [
+        "mysql.service"
       ];
 
       serviceConfig = {
         Type = "oneshot";
+        RemainAfterExit = true;
+
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+
+      script = ''
+        ${pkgs.mysql84}/bin/mysql <<EOF
+          ALTER USER '${cfg.database.user}'@'localhost' IDENTIFIED WITH caching_sha2_password BY '${databasePasswd}';
+          FLUSH PRIVILEGES;
+        EOF
+      '';
+    };
+
+    systemd.services.ac-dbimport = {
+      description = "AzerothCore DbImport";
+
+      wantedBy = [
+        "multi-user.target"
+      ];
+
+      requires = [
+        "mysql.service"
+        "ac-fix-dbuser.service"
+      ];
+      after = [
+        "mysql.service"
+        "ac-fix-dbuser.service"
+      ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
 
         User = "acore";
         Group = "acore";
 
         StateDirectory = "azerothcore";
         WorkingDirectory = "/var/lib/azerothcore";
-
-        # ExecStartPre = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf -d";
         ExecStart = "${cfg.package}/bin/dbimport -c /etc/azerothcore/dbimport.conf";
 
         Restart = "on-failure";
@@ -164,9 +208,20 @@ in
     systemd.services.ac-authserver = {
       description = "AzerothCore AuthServer";
 
-      wantedBy = [ "multi-user.target" ];
-      requires = [ "mysql.service" ];
-      after = [ "mysql.service" ];
+      wantedBy = [
+        "multi-user.target"
+      ];
+
+      requires = [
+        "mysql.service"
+        "ac-fix-dbuser.service"
+        "ac-dbimport.service"
+      ];
+      after = [
+        "mysql.service"
+        "ac-fix-dbuser.service"
+        "ac-dbimport.service"
+      ];
 
       serviceConfig = {
         Type = "simple";
@@ -176,8 +231,6 @@ in
 
         StateDirectory = "azerothcore";
         WorkingDirectory = "/var/lib/azerothcore";
-
-        # ExecStartPre = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf -d";
         ExecStart = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf";
 
         Restart = "on-failure";
@@ -188,9 +241,20 @@ in
     systemd.services.ac-worldserver = {
       description = "AzerothCore WorldServer";
 
-      wantedBy = [ "multi-user.target" ];
-      requires = [ "mysql.service" ];
-      after = [ "mysql.service" ];
+      wantedBy = [
+        "multi-user.target"
+      ];
+
+      requires = [
+        "mysql.service"
+        "ac-fix-dbuser.service"
+        "ac-dbimport.service"
+      ];
+      after = [
+        "mysql.service"
+        "ac-fix-dbuser.service"
+        "ac-dbimport.service"
+      ];
 
       serviceConfig = {
         Type = "simple";
@@ -200,8 +264,6 @@ in
 
         StateDirectory = "azerothcore";
         WorkingDirectory = "/var/lib/azerothcore";
-
-        # ExecStartPre = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf -d";
         ExecStart = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf";
 
         Restart = "on-failure";

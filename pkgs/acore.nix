@@ -59,6 +59,7 @@ clangStdenv.mkDerivation rec {
   ];
 
   postInstall = ''
-    cp -r "${src}/data" $out/
+    cp -r "${src}/data" $out/src
+    cp -r "${src}/modules" $out/src
   '';
 }

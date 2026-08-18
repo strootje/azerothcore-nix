@@ -15,9 +15,9 @@
       systems = [ "x86_64-linux" ];
 
       perSystem = { pkgs, ... }: {
-        packages = rec {
+        packages = {
           acore = pkgs.callPackage pkgs/acore.nix { };
-          default = acore;
+          client-data = pkgs.callPackage pkgs/client-data.nix { };
         };
       };
 
