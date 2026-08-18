@@ -82,7 +82,7 @@ in
       LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
 
     };
-    environment.etc."azerothcore/worldserver.conf".source = renderConf "worldserver" {
+    environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" {
       LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
       WorldDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.worldDatabase}";
       CharacterDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.characterDatabase}";
