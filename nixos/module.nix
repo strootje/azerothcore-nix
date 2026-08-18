@@ -100,7 +100,8 @@ in
 
     environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
       LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
-      "Updates.EnableDatabases" = "0";
+      "Network.UseSocketActivation" = 1;
+      "Updates.EnableDatabases" = 0;
 
       MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
       SourceDirectory = "${cfg.package}/src";
@@ -112,7 +113,8 @@ in
       LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
       WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
       CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
-      "Updates.EnableDatabases" = "0";
+      "Network.UseSocketActivation" = 1;
+      "Updates.EnableDatabases" = 0;
 
       MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
       SourceDirectory = "${cfg.package}/src";
@@ -214,12 +216,21 @@ in
       };
     };
 
+    systemd.sockets.ac-authserver = {
+      wantedBy = [
+        "sockets.target"
+      ];
+
+      partOf = [
+        "ac-authserver.service"
+      ];
+
+      listenStream = 3724;
+      NoDelay = true;
+    };
+
     systemd.services.ac-authserver = {
       description = "AzerothCore AuthServer";
-
-      wantedBy = [
-        "multi-user.target"
-      ];
 
       requires = [
         "mysql.service"
@@ -247,12 +258,21 @@ in
       };
     };
 
+    systemd.sockets.ac-worldserver = {
+      wantedBy = [
+        "sockets.target"
+      ];
+
+      partOf = [
+        "ac-worldserver.service"
+      ];
+
+      listenStream = 8085;
+      NoDelay = true;
+    };
+
     systemd.services.ac-worldserver = {
       description = "AzerothCore WorldServer";
-
-      wantedBy = [
-        "multi-user.target"
-      ];
 
       requires = [
         "mysql.service"
