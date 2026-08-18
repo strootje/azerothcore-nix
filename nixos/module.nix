@@ -119,6 +119,8 @@ in
       DataDir = "/var/lib/azerothcore/data";
       TempDir = "/var/cache/azerothcore";
       LogsDir = "/var/logs/azerothcore";
+
+      RealmID = 1;
     };
 
     services.mysql = lib.mkIf cfg.database.managed {
