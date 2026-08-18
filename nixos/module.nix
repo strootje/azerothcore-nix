@@ -109,9 +109,14 @@ in
 
     systemd.services.authserver = {
       description = "AzerothCore AuthServer";
+
       wantedBy = [ "multi-user.target" ];
+      requires = [ "mysql.service" ];
+      after = [ "mysql.service" ];
 
       serviceConfig = {
+        Type = "simple";
+
         User = "acore";
         Group = "acore";
 
@@ -120,15 +125,22 @@ in
 
         # ExecStartPre = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf -d";
         ExecStart = "${cfg.package}/bin/authserver -c /etc/azerothcore/authserver.conf";
-        Restart = "always";
+
+        Restart = "on-failure";
+        RestartSec = 5;
       };
     };
 
     systemd.services.worldserver = {
       description = "AzerothCore WorldServer";
+
       wantedBy = [ "multi-user.target" ];
+      requires = [ "mysql.service" ];
+      after = [ "mysql.service" ];
 
       serviceConfig = {
+        Type = "simple";
+
         User = "acore";
         Group = "acore";
 
@@ -137,7 +149,9 @@ in
 
         # ExecStartPre = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf -d";
         ExecStart = "${cfg.package}/bin/worldserver -c /etc/azerothcore/worldserver.conf";
-        Restart = "always";
+
+        Restart = "on-failure";
+        RestartSec = 5;
       };
     };
   };
