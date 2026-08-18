@@ -91,7 +91,7 @@ in
     };
 
     services.mysql = lib.mkIf cfg.database.managed {
-      package = pkgs.mariadb;
+      # package = pkgs.mariadb;
       enable = true;
 
       ensureDatabases = [
