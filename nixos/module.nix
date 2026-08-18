@@ -13,6 +13,7 @@ let
   defaultAuthSettings = (
     builtins.fromTOML (builtins.readFile "${cfg.package}/etc/authserver.conf.dist")
   );
+  tracedDefaultAuthSettings = builtins.trace (builtins.toJSON defaultAuthSettings) defaultAuthSettings;
   defaultWorldSettings = (
     builtins.fromTOML (builtins.readFile "${cfg.package}/etc/worldserver.conf.dist")
   );
@@ -80,7 +81,7 @@ in
     # environment.etc."azerothcore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
 
     environment.etc."azerothcore/authserver.conf".source = tomlFormat.generate "authserver.toml" (
-      lib.recursiveUpdate (defaultAuthSettings {
+      lib.recursiveUpdate (tracedDefaultAuthSettings {
         authserver = {
           LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
         };
