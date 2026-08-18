@@ -8,15 +8,13 @@
 
 let
   cfg = config.services.azerothcore;
-  tomlFormat = pkgs.formats.toml { };
 
-  defaultAuthSettings = (
-    builtins.fromTOML (builtins.readFile "${cfg.package}/etc/authserver.conf.dist")
-  );
-  tracedDefaultAuthSettings = builtins.trace (builtins.toJSON defaultAuthSettings) defaultAuthSettings;
-  defaultWorldSettings = (
-    builtins.fromTOML (builtins.readFile "${cfg.package}/etc/worldserver.conf.dist")
-  );
+  renderConf =
+    section: settings:
+    ''
+      [${section}]
+    ''
+    ++ lib.concatLines (lib.mapAttrsToList (name: value: "${name} = \"${toString value}\"")) settings;
 in
 {
   options.services.azerothcore = {
@@ -80,22 +78,15 @@ in
     # environment.etc."azerothcore/authserver.conf".source = "${cfg.package}/etc/authserver.conf.dist";
     # environment.etc."azerothcore/worldserver.conf".source = "${cfg.package}/etc/worldserver.conf.dist";
 
-    environment.etc."azerothcore/authserver.conf".source = tomlFormat.generate "authserver.toml" (
-      lib.recursiveUpdate (tracedDefaultAuthSettings {
-        authserver = {
-          LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
-        };
-      })
-    );
-    environment.etc."azerothcore/worldserver.conf".source = tomlFormat.generate "worldserver.toml" (
-      lib.recursiveUpdate (defaultWorldSettings {
-        worldserver = {
-          LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
-          WorldDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.worldDatabase}";
-          CharacterDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.characterDatabase}";
-        };
-      })
-    );
+    environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
+      LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
+
+    };
+    environment.etc."azerothcore/worldserver.conf".source = renderConf "worldserver" {
+      LoginDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.authDatabase}";
+      WorldDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.worldDatabase}";
+      CharacterDatabaseInfo = "${cfg.database.host};${cfg.database.port};${cfg.database.user};;${cfg.database.characterDatabase}";
+    };
 
     services.mysql = lib.mkIf cfg.database.managed {
       package = pkgs.mariadb;
