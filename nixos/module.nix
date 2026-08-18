@@ -225,7 +225,7 @@ in
         "ac-authserver.service"
       ];
 
-      listenStream = 3724;
+      listenStreams = 3724;
     };
 
     systemd.services.ac-authserver = {
@@ -266,7 +266,7 @@ in
         "ac-worldserver.service"
       ];
 
-      listenStream = 8085;
+      listenStreams = 8085;
     };
 
     systemd.services.ac-worldserver = {
