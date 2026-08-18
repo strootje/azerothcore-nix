@@ -145,6 +145,13 @@ in
       ];
     };
 
+    networking.firewall = {
+      allowedTCPPorts = [
+        3724 # authserver
+        8085 # worldserver
+      ];
+    };
+
     systemd.services.ac-fix-dbuser = {
       description = "AzerothCore DbUser";
 
