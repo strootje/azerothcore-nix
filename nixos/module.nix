@@ -226,7 +226,6 @@ in
       ];
 
       listenStream = 3724;
-      NoDelay = true;
     };
 
     systemd.services.ac-authserver = {
@@ -268,7 +267,6 @@ in
       ];
 
       listenStream = 8085;
-      NoDelay = true;
     };
 
     systemd.services.ac-worldserver = {
