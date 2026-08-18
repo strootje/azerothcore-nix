@@ -74,7 +74,7 @@ in
 
     environment.etc."azerothcore/authserver.conf".source = tomlFormat.generate "authserver.toml" (
       lib.recursiveUpdate (
-        builtins.fromTOML (builtins.readFile "${cfg.package}/etc/authserver.conf.dist") {
+        (builtins.fromTOML (builtins.readFile "${cfg.package}/etc/authserver.conf.dist")) {
           authserver = {
             LoginDatabaseInfo = "localhost;3306;acore;;acore_auth";
           };
@@ -83,7 +83,7 @@ in
     );
     environment.etc."azerothcore/worldserver.conf".source = tomlFormat.generate "worldserver.toml" (
       lib.recursiveUpdate (
-        builtins.fromTOML (builtins.readFile "${cfg.package}/etc/worldserver.conf.dist") {
+        (builtins.fromTOML (builtins.readFile "${cfg.package}/etc/worldserver.conf.dist")) {
           authserver = {
             LoginDatabaseInfo = "localhost;3306;acore;;acore_auth";
             WorldDatabaseInfo = "127.0.0.1;3306;acore;;acore_world";
