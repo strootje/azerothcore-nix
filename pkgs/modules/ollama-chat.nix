@@ -4,6 +4,6 @@ fetchFromGitHub {
   owner = "dustinhendrickson";
   repo = "mod-ollama-chat";
 
-  rev = "main";
-  hash = "sha256-WpxZIEJS4Wz5HuIyzEZYVBxpaOOXqofG5SyxGKkfOUM=";
+  rev = "8ba5e79";
+  hash = "sha256-KgOVaRyZc9kdBOPIysZRkBYvWvyYOBAAaScTiuzxGEw=";
 }

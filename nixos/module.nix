@@ -19,31 +19,33 @@ let
 
   mkAzerothCore = pkgs.callPackage ../pkgs/acore.nix { };
   acorePkg = mkAzerothCore {
-    modules = {
-      mod-ah-bot-plus = lib.optionalAttrs cfg.modules.ah-bot-plus.enable (
-        pkgs.callPackage ../pkgs/modules/ah-bot-plus.nix { }
-      );
+    modules = (
+      { }
 
-      mod-aoe-loot = lib.optionalAttrs cfg.modules.aoe-loot.enable (
-        pkgs.callPackage ../pkgs/modules/aoe-loot.nix { }
-      );
+      // (lib.optionalAttrs cfg.modules.ah-bot-plus.enable {
+        mod-ah-bot-plus = (pkgs.callPackage ../pkgs/modules/ah-bot-plus.nix { });
+      })
 
-      mod-dongeon-clear = lib.optionalAttrs cfg.modules.dongeon-clear.enable (
-        pkgs.callPackage ../pkgs/modules/dongeon-clear.nix { }
-      );
+      // (lib.optionalAttrs cfg.modules.aoe-loot.enable {
+        mod-aoe-loot = (pkgs.callPackage ../pkgs/modules/aoe-loot.nix { });
+      })
 
-      mod-individual-progression = lib.optionalAttrs cfg.modules.individual-progression.enable (
-        pkgs.callPackage ../pkgs/modules/individual-progression.nix { }
-      );
+      // (lib.optionalAttrs cfg.modules.dungeon-clear.enable {
+        mod-dungeon-clear = (pkgs.callPackage ../pkgs/modules/dungeon-clear.nix { });
+      })
 
-      mod-ollama-chat = lib.optionalAttrs cfg.modules.ollama-chat.enable (
-        pkgs.callPackage ../pkgs/modules/ollama-chat.nix { }
-      );
+      // (lib.optionalAttrs cfg.modules.individual-progression.enable {
+        mod-individual-progression = (pkgs.callPackage ../pkgs/modules/individual-progression.nix { });
+      })
 
-      mod-playerbots = lib.optionalAttrs cfg.modules.playerbots.enable (
-        pkgs.callPackage ../pkgs/modules/playerbots.nix { }
-      );
-    };
+      // (lib.optionalAttrs cfg.modules.ollama-chat.enable {
+        mod-ollama-chat = (pkgs.callPackage ../pkgs/modules/ollama-chat.nix { });
+      })
+
+      // (lib.optionalAttrs cfg.modules.playerbots.enable {
+        mod-playerbots = (pkgs.callPackage ../pkgs/modules/playerbots.nix { });
+      })
+    );
   };
 in
 {
@@ -104,12 +106,28 @@ in
     };
   };
 
-  options.services.azerothcore.modules.playerBots = {
-    enable = lib.mkEnableOption "AzerothCore modPlayerBots";
+  options.services.azerothcore.modules.ah-bot-plus = {
+    enable = lib.mkEnableOption "AzerothCore modAhBotPlus";
+  };
+
+  options.services.azerothcore.modules.aoe-loot = {
+    enable = lib.mkEnableOption "AzerothCore modAoeLoot";
+  };
+
+  options.services.azerothcore.modules.dungeon-clear = {
+    enable = lib.mkEnableOption "AzerothCore modDungeonClear";
   };
 
   options.services.azerothcore.modules.individual-progression = {
     enable = lib.mkEnableOption "AzerothCore modIndividualProgression";
+  };
+
+  options.services.azerothcore.modules.ollama-chat = {
+    enable = lib.mkEnableOption "AzerothCore modOllamaChat";
+  };
+
+  options.services.azerothcore.modules.playerbots = {
+    enable = lib.mkEnableOption "AzerothCore modPlayerbots";
   };
 
   config = lib.mkIf cfg.enable {

@@ -4,6 +4,6 @@ fetchFromGitHub {
   owner = "azerothcore";
   repo = "mod-aoe-loot";
 
-  rev = "master";
-  hash = "sha256-WpxZIEJS4Wz5HuIyzEZYVBxpaOOXqofG5SyxGKkfOUM=";
+  rev = "b5c6635";
+  hash = "sha256-N9bkjYcS1mEawBLJoW5jC4RIbEw0p0C9Gb7ePp2ZfiA=";
 }

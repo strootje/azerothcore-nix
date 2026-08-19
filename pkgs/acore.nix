@@ -27,29 +27,31 @@
 let
   isPlayerBotEnabled = builtins.hasAttr "mod-playerbots" modules;
   srcOwner = if isPlayerBotEnabled then "mod-playerbots" else "azerothcore";
-  srcRepo = if isPlayerBotEnabled then "azerothcore-wotlk" else "azerothcore";
-  srcRev = if isPlayerBotEnabled then "Playerbot" else "master";
+  srcVersion = if isPlayerBotEnabled then "efe123f" else "69f387e";
   srcHash =
     if isPlayerBotEnabled then
-      "sha256-AZV+5YZqdArcsM6kpHiBMQJwUVMzMOrajcbO6aKie+A="
+      "sha256-CB6VYl2pFE8FpowsvEeaDMUtJJSHzb4tE/v6c/GKFfA="
     else
       "sha256-AZV+5YZqdArcsM6kpHiBMQJwUVMzMOrajcbO6aKie+A=";
 in
 
 clangStdenv.mkDerivation rec {
   pname = "acore";
-  version = "master";
+  version = srcVersion;
 
   src = fetchFromGitHub {
     owner = srcOwner;
-    repo = srcRepo;
+    repo = "azerothcore-wotlk";
 
-    rev = srcRev;
+    rev = version;
     hash = srcHash;
   };
 
   postPatch = lib.concatLines (
-    lib.mapAttrsToList (name: src: "ln -s ${src} modules/${name}") modules
+    lib.mapAttrsToList (name: src: ''
+      rm -rf modules/${name}
+      cp -r ${src} modules/${name}
+    '') modules
   );
 
   nativeBuildInputs = [
@@ -64,7 +66,6 @@ clangStdenv.mkDerivation rec {
     "-DSCRIPTS=static"
     "-DMODULES=static"
     "-DWITH_WARNINGS=ON"
-    # "-DBoost_USE_STATIC_LIBS=ON"
   ];
 
   buildInputs = [
