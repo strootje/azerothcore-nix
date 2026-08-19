@@ -1,4 +1,6 @@
 {
+  lib,
+
   clangStdenv,
   fetchFromGitHub,
 
@@ -18,6 +20,10 @@
   ncurses,
 }:
 
+{
+  modules ? { },
+}:
+
 clangStdenv.mkDerivation rec {
   pname = "acore";
   version = "master";
@@ -30,6 +36,10 @@ clangStdenv.mkDerivation rec {
     hash = "sha256-AZV+5YZqdArcsM6kpHiBMQJwUVMzMOrajcbO6aKie+A=";
   };
 
+  postPatch = lib.concatLines (
+    lib.mapAttrsToList (name: src: "ln -s ${src} modules/${name}") modules
+  );
+
   nativeBuildInputs = [
     cmake
     ninja
@@ -38,7 +48,7 @@ clangStdenv.mkDerivation rec {
 
   cmakeFlags = [
     "-DAPPS_BUILD=all"
-    "-DTOOLS_BUILD=all"
+    "-DTOOLS_BUILD=db-only"
     "-DSCRIPTS=static"
     "-DMODULES=static"
     "-DWITH_WARNINGS=ON"

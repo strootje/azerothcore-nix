@@ -16,6 +16,14 @@ let
     ''
     + lib.concatLines (lib.mapAttrsToList (name: value: "${name} = \"${toString value}\"") settings);
   databasePasswd = "acore";
+
+  acorePkg = pkgs.callPackage ../pkgs/acore.nix { } {
+    modules = {
+      mod-individual-progression =
+        lib.mkIf cfg.services.azerothcore.modules.mod-individual-progression.enable
+          (pkgs.callPackage ../pkgs/modules/individual-progression.nix { });
+    };
+  };
 in
 {
   options.services.azerothcore = {
@@ -23,7 +31,7 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = self.packages.${pkgs.stdenv.hostPlatform.system}.acore;
+      default = acorePkg;
     };
   };
 
@@ -73,6 +81,14 @@ in
       type = lib.types.package;
       default = self.packages.${pkgs.stdenv.hostPlatform.system}.client-data;
     };
+  };
+
+  options.services.azerothcore.modules.playerBots = {
+    enable = lib.mkEnableOption "AzerothCore modPlayerBots";
+  };
+
+  options.services.azerothcore.modules.individual-progression = {
+    enable = lib.mkEnableOption "AzerothCore modIndividualProgression";
   };
 
   config = lib.mkIf cfg.enable {
