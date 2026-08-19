@@ -17,7 +17,9 @@ let
     + lib.concatLines (lib.mapAttrsToList (name: value: "${name} = \"${toString value}\"") settings);
   databasePasswd = "acore";
 
-  acorePkg = pkgs.callPackage ../pkgs/acore.nix { } {
+  mkAzerothCore = pkgs.callPackage ../pkgs/acore.nix { };
+
+  acorePkg = mkAzerothCore {
     modules = {
       mod-individual-progression =
         lib.mkIf cfg.services.azerothcore.modules.mod-individual-progression.enable
