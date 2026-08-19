@@ -21,7 +21,7 @@ let
 
   acorePkg = mkAzerothCore {
     modules = {
-      mod-individual-progression = lib.optionsAttrs cfg.modules.mod-individual-progression.enable (
+      mod-individual-progression = lib.optionalAttrs cfg.modules.mod-individual-progression.enable (
         pkgs.callPackage ../pkgs/modules/individual-progression.nix { }
       );
     };
