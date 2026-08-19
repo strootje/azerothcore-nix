@@ -24,16 +24,28 @@
   modules ? { },
 }:
 
+let
+  isPlayerBotEnabled = builtins.hasAttr "mod-playerbots" modules;
+  srcOwner = if isPlayerBotEnabled then "mod-playerbots" else "azerothcore";
+  srcRepo = if isPlayerBotEnabled then "azerothcore-wotlk" else "azerothcore";
+  srcRev = if isPlayerBotEnabled then "Playerbot" else "master";
+  srcHash =
+    if isPlayerBotEnabled then
+      "sha256-AZV+5YZqdArcsM6kpHiBMQJwUVMzMOrajcbO6aKie+A="
+    else
+      "sha256-AZV+5YZqdArcsM6kpHiBMQJwUVMzMOrajcbO6aKie+A=";
+in
+
 clangStdenv.mkDerivation rec {
   pname = "acore";
   version = "master";
 
   src = fetchFromGitHub {
-    owner = "azerothcore";
-    repo = "azerothcore";
+    owner = srcOwner;
+    repo = srcRepo;
 
-    rev = version;
-    hash = "sha256-AZV+5YZqdArcsM6kpHiBMQJwUVMzMOrajcbO6aKie+A=";
+    rev = srcRev;
+    hash = srcHash;
   };
 
   postPatch = lib.concatLines (

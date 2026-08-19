@@ -21,6 +21,13 @@
           in
           {
             acore = mkAzerothCore { };
+
+            acore-playerbots = mkAzerothCore {
+              modules = {
+                mod-playerbots = pkgs.callPackage pkgs/modules/playerbots.nix { };
+              };
+            };
+
             client-data = pkgs.callPackage pkgs/client-data.nix { };
           };
       };

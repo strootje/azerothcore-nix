@@ -18,11 +18,30 @@ let
   databasePasswd = "acore";
 
   mkAzerothCore = pkgs.callPackage ../pkgs/acore.nix { };
-
   acorePkg = mkAzerothCore {
     modules = {
+      mod-ah-bot-plus = lib.optionalAttrs cfg.modules.ah-bot-plus.enable (
+        pkgs.callPackage ../pkgs/modules/ah-bot-plus.nix { }
+      );
+
+      mod-aoe-loot = lib.optionalAttrs cfg.modules.aoe-loot.enable (
+        pkgs.callPackage ../pkgs/modules/aoe-loot.nix { }
+      );
+
+      mod-dongeon-clear = lib.optionalAttrs cfg.modules.dongeon-clear.enable (
+        pkgs.callPackage ../pkgs/modules/dongeon-clear.nix { }
+      );
+
       mod-individual-progression = lib.optionalAttrs cfg.modules.individual-progression.enable (
         pkgs.callPackage ../pkgs/modules/individual-progression.nix { }
+      );
+
+      mod-ollama-chat = lib.optionalAttrs cfg.modules.ollama-chat.enable (
+        pkgs.callPackage ../pkgs/modules/ollama-chat.nix { }
+      );
+
+      mod-playerbots = lib.optionalAttrs cfg.modules.playerbots.enable (
+        pkgs.callPackage ../pkgs/modules/playerbots.nix { }
       );
     };
   };
