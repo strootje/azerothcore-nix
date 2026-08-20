@@ -201,20 +201,28 @@ in
       package = pkgs.mysql84;
       enable = true;
 
-      ensureDatabases = [
-        cfg.database.authDatabase
-        cfg.database.worldDatabase
-        cfg.database.characterDatabase
-      ];
+      ensureDatabases = (
+        [
+          cfg.database.authDatabase
+          cfg.database.worldDatabase
+          cfg.database.characterDatabase
+        ]
+        ++ (lib.optionals cfg.modules.playerbots.enable [ cfg.modules.playerbots.databaseName ])
+      );
 
       ensureUsers = [
         {
           name = cfg.database.user;
-          ensurePermissions = {
-            "${cfg.database.authDatabase}.*" = "ALL PRIVILEGES";
-            "${cfg.database.worldDatabase}.*" = "ALL PRIVILEGES";
-            "${cfg.database.characterDatabase}.*" = "ALL PRIVILEGES";
-          };
+          ensurePermissions = (
+            {
+              "${cfg.database.authDatabase}.*" = "ALL PRIVILEGES";
+              "${cfg.database.worldDatabase}.*" = "ALL PRIVILEGES";
+              "${cfg.database.characterDatabase}.*" = "ALL PRIVILEGES";
+            }
+            // (lib.optionalAttrs cfg.modules.playerbots.enable {
+              "${cfg.modules.playerbots.databaseName}.*" = "ALL PRIVILEGES";
+            })
+          );
         }
       ];
     };
