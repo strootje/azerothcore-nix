@@ -145,8 +145,8 @@ in
 
     systemd.tmpfiles.rules = [
       "L+ /var/lib/azerothcore/data - - - - ${cfg.clientData.package}"
-      "d /var/logs/azerothcore 0750 acore acore -"
       "d /var/cache/azerothcore 0750 acore acore -"
+      "d /var/log/azerothcore 0750 acore acore -"
     ];
 
     environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" (
@@ -158,7 +158,7 @@ in
         MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
         SourceDirectory = "${cfg.package}/src";
         TempDir = "/var/cache/azerothcore";
-        LogsDir = "/var/logs/azerothcore";
+        LogsDir = "/var/log/azerothcore";
       }
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
@@ -174,7 +174,7 @@ in
       MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
       SourceDirectory = "${cfg.package}/src";
       TempDir = "/var/cache/azerothcore";
-      LogsDir = "/var/logs/azerothcore";
+      LogsDir = "/var/log/azerothcore";
     };
 
     environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" (
@@ -189,7 +189,7 @@ in
         SourceDirectory = "${cfg.package}/src";
         DataDir = "/var/lib/azerothcore/data";
         TempDir = "/var/cache/azerothcore";
-        LogsDir = "/var/logs/azerothcore";
+        LogsDir = "/var/log/azerothcore";
 
         RealmID = 1;
       }
