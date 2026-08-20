@@ -195,7 +195,7 @@ in
       }
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
-        "Playerbots.Updates.EnableDatabases" = 0;
+        "Playerbots.Updates.EnableDatabases" = 1;
       })
     );
 
