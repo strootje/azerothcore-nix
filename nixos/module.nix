@@ -169,8 +169,8 @@ in
       LogsDir = "/var/logs/azerothcore";
     };
 
-    environment.etc."azerothcore/worldserver.conf".text =
-      renderConf "worldserver" {
+    environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" (
+      {
         LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
         WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
         CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
@@ -188,7 +188,8 @@ in
 
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
-      });
+      })
+    );
 
     services.mysql = lib.mkIf cfg.database.managed {
       package = pkgs.mysql84;
