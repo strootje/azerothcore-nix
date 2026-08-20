@@ -128,6 +128,11 @@ in
 
   options.services.azerothcore.modules.playerbots = {
     enable = lib.mkEnableOption "AzerothCore modPlayerbots";
+
+    databaseName = lib.mkOption {
+      type = lib.types.str;
+      default = "acore_playerbots";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -164,21 +169,26 @@ in
       LogsDir = "/var/logs/azerothcore";
     };
 
-    environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
-      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
-      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
-      "Network.UseSocketActivation" = 1;
-      "Updates.EnableDatabases" = 0;
+    environment.etc."azerothcore/worldserver.conf".text =
+      renderConf "worldserver" {
+        LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+        WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
+        CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
+        "Network.UseSocketActivation" = 1;
+        "Updates.EnableDatabases" = 0;
 
-      MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-      SourceDirectory = "${cfg.package}/src";
-      DataDir = "/var/lib/azerothcore/data";
-      TempDir = "/var/cache/azerothcore";
-      LogsDir = "/var/logs/azerothcore";
+        MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
+        SourceDirectory = "${cfg.package}/src";
+        DataDir = "/var/lib/azerothcore/data";
+        TempDir = "/var/cache/azerothcore";
+        LogsDir = "/var/logs/azerothcore";
 
-      RealmID = 1;
-    };
+        RealmID = 1;
+      }
+
+      // (lib.optionalAttrs cfg.modules.playerbots.enable {
+        PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
+      });
 
     services.mysql = lib.mkIf cfg.database.managed {
       package = pkgs.mysql84;
