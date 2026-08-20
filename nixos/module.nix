@@ -145,6 +145,8 @@ in
 
     systemd.tmpfiles.rules = [
       "L+ /var/lib/azerothcore/data - - - - ${cfg.clientData.package}"
+      "d /var/logs/azerothcore 0750 acore acore -"
+      "d /var/cache/azerothcore 0750 acore acore -"
     ];
 
     environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" (
