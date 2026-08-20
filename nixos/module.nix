@@ -147,16 +147,22 @@ in
       "L+ /var/lib/azerothcore/data - - - - ${cfg.clientData.package}"
     ];
 
-    environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" {
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
-      WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
-      CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
+    environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" (
+      {
+        LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+        WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
+        CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
 
-      MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-      SourceDirectory = "${cfg.package}/src";
-      TempDir = "/var/cache/azerothcore";
-      LogsDir = "/var/logs/azerothcore";
-    };
+        MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
+        SourceDirectory = "${cfg.package}/src";
+        TempDir = "/var/cache/azerothcore";
+        LogsDir = "/var/logs/azerothcore";
+      }
+      // (lib.optionalAttrs cfg.modules.playerbots.enable {
+        PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
+        Playerbots.Updates.EnableDatabases = 1;
+      })
+    );
 
     environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
       LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
@@ -185,9 +191,9 @@ in
 
         RealmID = 1;
       }
-
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
+        Playerbots.Updates.EnableDatabases = 0;
       })
     );
 
