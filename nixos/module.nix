@@ -195,6 +195,10 @@ in
         "Stats.Limits.Enable" = 0;
         "Console.Enable" = 0;
       }
+      // (lib.optionalAttrs cfg.modules.aoe-loot.enable {
+        "AOELoot.Enable" = 1;
+        "AOELoot.Message" = "Aoe loot??";
+      })
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
         "Playerbots.Updates.EnableDatabases" = 1;
