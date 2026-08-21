@@ -167,6 +167,7 @@ in
     );
 
     environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
+      BindIP = "0.0.0.0";
       LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
       # "Network.UseSocketActivation" = 1;
       "Updates.EnableDatabases" = 0;
@@ -179,6 +180,7 @@ in
 
     environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" (
       {
+        BindIP = "0.0.0.0";
         LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
         WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
         CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
