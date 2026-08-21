@@ -338,6 +338,13 @@ in
         "ac-dbimport.service"
       ];
 
+      wants = [
+        "ac-worldserver.service"
+      ];
+      before = [
+        "ac-worldserver.service"
+      ];
+
       serviceConfig = {
         Type = "simple";
 
