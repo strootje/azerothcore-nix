@@ -193,6 +193,7 @@ in
 
         RealmID = 1;
         "Stats.Limits.Enable" = 0;
+        "Console.Enable" = 0;
       }
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
