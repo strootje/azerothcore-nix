@@ -108,14 +108,36 @@ in
 
   options.services.azerothcore.modules.ah-bot-plus = {
     enable = lib.mkEnableOption "AzerothCore modAhBotPlus";
+
+    settings = {
+      sellerGuid = lib.mkOption {
+        type = lib.types.str;
+        default = "0";
+      };
+    };
   };
 
   options.services.azerothcore.modules.aoe-loot = {
     enable = lib.mkEnableOption "AzerothCore modAoeLoot";
+
+    settings = {
+      range = lib.mkOption {
+        type = lib.types.int;
+        default = 55;
+      };
+    };
   };
 
   options.services.azerothcore.modules.dungeon-clear = {
     enable = lib.mkEnableOption "AzerothCore modDungeonClear";
+
+    settings = {
+      pullMode = lib.mkOption {
+        type = lib.types.int;
+        # 0=off, 1=on, 2=dynamic — bump to 2 once you trust it
+        default = 1;
+      };
+    };
   };
 
   options.services.azerothcore.modules.individual-progression = {
@@ -132,6 +154,17 @@ in
     databaseName = lib.mkOption {
       type = lib.types.str;
       default = "acore_playerbots";
+    };
+
+    settings = {
+      minRandomBots = lib.mkOption {
+        type = lib.types.int;
+        default = 250;
+      };
+      maxRandomBots = lib.mkOption {
+        type = lib.types.int;
+        default = 500;
+      };
     };
   };
 
@@ -197,13 +230,32 @@ in
         "Stats.Limits.Enable" = 0;
         "Console.Enable" = 0;
       }
+      // (lib.optionalAttrs cfg.modules.ah-bot-plus.enable {
+        "AuctionHouseBot.EnableSeller" = true;
+        "AuctionHouseBot.GUIDs" = cfg.modules.ah-bot-plus.settings.sellerGuid;
+        "AuctionHouseBot.Alliance.MinItems" = 200;
+        "AuctionHouseBot.Alliance.MaxItems" = 400;
+        "AuctionHouseBot.Horde.MinItems" = 200;
+        "AuctionHouseBot.Horde.MaxItems" = 400;
+        "AuctionHouseBot.Neutral.MinItems" = 200;
+        "AuctionHouseBot.Neutral.MaxItems" = 400;
+        "AuctionHouseBot.Buyer.Enabled" = false;
+      })
       // (lib.optionalAttrs cfg.modules.aoe-loot.enable {
         "AOELoot.Message" = 0;
         "AOELoot.Enable" = 1;
+        "AOELoot.Range" = cfg.modules.aoe-loot.settings.range;
+      })
+      // (lib.optionalAttrs cfg.modules.dungeon-clear.enable {
+        "DungeonClear.PullMode" = cfg.modules.dungeon-clear.settings.pullMode;
       })
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
         "Playerbots.Updates.EnableDatabases" = 1;
+        "AiPlayerbot.DisabledWithoutRealPlayer" = 1;
+        "AiPlayerbot.MinRandomBots" = cfg.modules.playerbots.settings.minRandomBots;
+        "AiPlayerbot.MaxRandomBots" = cfg.modules.playerbots.settings.maxRandomBots;
+        "AiPlayerbot.RandomBotAutologinDelay" = 30;
       })
     );
 

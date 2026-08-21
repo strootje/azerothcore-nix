@@ -24,11 +24,11 @@
 
             acore-full = mkAzerothCore {
               modules = {
-                # mod-ah-bot-plus = pkgs.callPackage pkgs/modules/ah-bot-plus.nix { };
-                # mod-aoe-loot = pkgs.callPackage pkgs/modules/aoe-loot.nix { };
-                # mod-dungeon-clear = pkgs.callPackage pkgs/modules/dungeon-clear.nix { };
-                # mod-individual-progression = pkgs.callPackage pkgs/modules/individual-progression.nix { };
-                # mod-ollama-chat = pkgs.callPackage pkgs/modules/ollama-chat.nix { };
+                mod-ah-bot-plus = pkgs.callPackage pkgs/modules/ah-bot-plus.nix { };
+                mod-aoe-loot = pkgs.callPackage pkgs/modules/aoe-loot.nix { };
+                mod-dungeon-clear = pkgs.callPackage pkgs/modules/dungeon-clear.nix { };
+                mod-individual-progression = pkgs.callPackage pkgs/modules/individual-progression.nix { };
+                mod-ollama-chat = pkgs.callPackage pkgs/modules/ollama-chat.nix { };
                 mod-playerbots = pkgs.callPackage pkgs/modules/playerbots.nix { };
               };
             };
