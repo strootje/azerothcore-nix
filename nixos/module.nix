@@ -168,7 +168,7 @@ in
 
     environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
       LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
-      "Network.UseSocketActivation" = 1;
+      # "Network.UseSocketActivation" = 1;
       "Updates.EnableDatabases" = 0;
 
       MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
@@ -182,7 +182,7 @@ in
         LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
         WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
         CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
-        "Network.UseSocketActivation" = 1;
+        # "Network.UseSocketActivation" = 1;
         "Updates.EnableDatabases" = 0;
 
         MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
@@ -308,20 +308,24 @@ in
       };
     };
 
-    systemd.sockets.ac-authserver = {
-      wantedBy = [
-        "sockets.target"
-      ];
+    # systemd.sockets.ac-authserver = {
+    #   wantedBy = [
+    #     "sockets.target"
+    #   ];
 
-      partOf = [
-        "ac-authserver.service"
-      ];
+    #   partOf = [
+    #     "ac-authserver.service"
+    #   ];
 
-      listenStreams = [ 3724 ];
-    };
+    #   listenStreams = [ 3724 ];
+    # };
 
     systemd.services.ac-authserver = {
       description = "AzerothCore AuthServer";
+
+      wantedBy = [
+        "multi-user.target"
+      ];
 
       restartTriggers = [
         "/etc/azerothcore/authserver.conf"
@@ -360,20 +364,24 @@ in
       };
     };
 
-    systemd.sockets.ac-worldserver = {
-      wantedBy = [
-        "sockets.target"
-      ];
+    # systemd.sockets.ac-worldserver = {
+    #   wantedBy = [
+    #     "sockets.target"
+    #   ];
 
-      partOf = [
-        "ac-worldserver.service"
-      ];
+    #   partOf = [
+    #     "ac-worldserver.service"
+    #   ];
 
-      listenStreams = [ 8085 ];
-    };
+    #   listenStreams = [ 8085 ];
+    # };
 
     systemd.services.ac-worldserver = {
       description = "AzerothCore WorldServer";
+
+      wantedBy = [
+        "multi-user.target"
+      ];
 
       restartTriggers = [
         "/etc/azerothcore/worldserver.conf"
