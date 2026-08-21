@@ -82,8 +82,9 @@ clangStdenv.mkDerivation rec {
   ];
 
   postInstall = ''
-    mkdir -p $out/src
-    cp -r "${src}/data" $out/src
-    cp -r "${src}/modules" $out/src
+    mkdir -p $out/sql-files
+    srcRoot="$(readlink -f "$PWD/..")"
+    ( cd "$srcRoot" && find data -name '*.sql' -print -exec cp --parents --no-preserve=mode -t $out/sql-files {} + )
+    ( cd "$srcRoot" && find modules -name '*.sql' -print -exec cp --parents --no-preserve=mode -t $out/sql-files {} + ) 
   '';
 }

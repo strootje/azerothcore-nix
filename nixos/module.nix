@@ -156,7 +156,7 @@ in
         CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
 
         MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-        SourceDirectory = "${cfg.package}/src";
+        SourceDirectory = "${cfg.package}/sql-files";
         TempDir = "/var/cache/azerothcore";
         LogsDir = "/var/log/azerothcore";
       }
@@ -172,7 +172,7 @@ in
       "Updates.EnableDatabases" = 0;
 
       MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-      SourceDirectory = "${cfg.package}/src";
+      SourceDirectory = "${cfg.package}/sql-files";
       TempDir = "/var/cache/azerothcore";
       LogsDir = "/var/log/azerothcore";
     };
@@ -186,7 +186,7 @@ in
         "Updates.EnableDatabases" = 0;
 
         MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-        SourceDirectory = "${cfg.package}/src";
+        SourceDirectory = "${cfg.package}/sql-files";
         DataDir = "/var/lib/azerothcore/data";
         TempDir = "/var/cache/azerothcore";
         LogsDir = "/var/log/azerothcore";
@@ -195,7 +195,7 @@ in
       }
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
         PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
-        "Playerbots.Updates.EnableDatabases" = 1;
+        "Playerbots.Updates.EnableDatabases" = 0;
       })
     );
 
