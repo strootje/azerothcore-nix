@@ -279,6 +279,10 @@ in
         "multi-user.target"
       ];
 
+      restartTriggers = [
+        "/etc/azerothcore/dbimport.conf"
+      ];
+
       requires = [
         "mysql.service"
         "ac-fix-dbuser.service"
@@ -318,6 +322,10 @@ in
 
     systemd.services.ac-authserver = {
       description = "AzerothCore AuthServer";
+
+      restartTriggers = [
+        "/etc/azerothcore/authserver.conf"
+      ];
 
       requires = [
         "mysql.service"
@@ -359,6 +367,10 @@ in
 
     systemd.services.ac-worldserver = {
       description = "AzerothCore WorldServer";
+
+      restartTriggers = [
+        "/etc/azerothcore/worldserver.conf"
+      ];
 
       requires = [
         "mysql.service"
