@@ -28,6 +28,7 @@
                 mod-aoe-loot = pkgs.callPackage pkgs/modules/aoe-loot.nix { };
                 mod-dungeon-clear = pkgs.callPackage pkgs/modules/dungeon-clear.nix { };
                 mod-individual-progression = pkgs.callPackage pkgs/modules/individual-progression.nix { };
+                mod-multibot-bridge = pkgs.callPackage pkgs/modules/multibot-bridge.nix { };
                 mod-ollama-chat = pkgs.callPackage pkgs/modules/ollama-chat.nix { };
                 mod-playerbots = pkgs.callPackage pkgs/modules/playerbots.nix { };
               };
