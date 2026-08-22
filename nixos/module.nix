@@ -43,6 +43,7 @@ let
       })
 
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
+        mod-multibot-bridge = (pkgs.callPackage ../pkgs/modules/multibot-bridge.nix { });
         mod-playerbots = (pkgs.callPackage ../pkgs/modules/playerbots.nix { });
       })
     );
