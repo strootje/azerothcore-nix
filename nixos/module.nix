@@ -185,49 +185,57 @@ in
 
     environment.etc."azerothcore/dbimport.conf".text = renderConf "dbimport" (
       {
-        LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
-        WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
-        CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
+        "LoginDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+        "WorldDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
+        "CharacterDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
 
-        MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-        SourceDirectory = "${cfg.package}/sql-files";
-        TempDir = "/var/cache/azerothcore";
-        LogsDir = "/var/log/azerothcore";
+        "MySQLExecutable" = "${pkgs.mysql84}/bin/mysql";
+        "SourceDirectory" = "${cfg.package}/sql-files";
+        "TempDir" = "/var/cache/azerothcore";
+        "LogsDir" = "/var/log/azerothcore";
       }
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
-        PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
+        "PlayerbotsDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
         "Playerbots.Updates.EnableDatabases" = 1;
       })
     );
 
     environment.etc."azerothcore/authserver.conf".text = renderConf "authserver" {
-      BindIP = "0.0.0.0";
-      LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+      "BindIP" = "0.0.0.0";
+      "LoginDatabaseInfo" =
+        "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
       # "Network.UseSocketActivation" = 1;
       "Updates.EnableDatabases" = 0;
 
-      MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-      SourceDirectory = "${cfg.package}/sql-files";
-      TempDir = "/var/cache/azerothcore";
-      LogsDir = "/var/log/azerothcore";
+      "MySQLExecutable" = "${pkgs.mysql84}/bin/mysql";
+      "SourceDirectory" = "${cfg.package}/sql-files";
+      "TempDir" = "/var/cache/azerothcore";
+      "LogsDir" = "/var/log/azerothcore";
     };
 
     environment.etc."azerothcore/worldserver.conf".text = renderConf "worldserver" (
       {
-        BindIP = "0.0.0.0";
-        LoginDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
-        WorldDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
-        CharacterDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
+        "BindIP" = "0.0.0.0";
+        "LoginDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.authDatabase}";
+        "WorldDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.worldDatabase}";
+        "CharacterDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
         # "Network.UseSocketActivation" = 1;
         "Updates.EnableDatabases" = 0;
 
-        MySQLExecutable = "${pkgs.mysql84}/bin/mysql";
-        SourceDirectory = "${cfg.package}/sql-files";
-        DataDir = "/var/lib/azerothcore/data";
-        TempDir = "/var/cache/azerothcore";
-        LogsDir = "/var/log/azerothcore";
+        "MySQLExecutable" = "${pkgs.mysql84}/bin/mysql";
+        "SourceDirectory" = "${cfg.package}/sql-files";
+        "DataDir" = "/var/lib/azerothcore/data";
+        "TempDir" = "/var/cache/azerothcore";
+        "LogsDir" = "/var/log/azerothcore";
 
-        RealmID = 1;
+        "RealmID" = 1;
         "Stats.Limits.Enable" = 0;
         "Console.Enable" = 0;
       }
@@ -250,8 +258,19 @@ in
       // (lib.optionalAttrs cfg.modules.dungeon-clear.enable {
         "DungeonClear.PullMode" = cfg.modules.dungeon-clear.settings.pullMode;
       })
+      // (lib.optionalAttrs cfg.modules.individual-progression.enable {
+        "IndividualProgression.Enable" = 1;
+        "IndividualProgression.VanillaPowerAdjustment" = 0.5;
+        "IndividualProgression.VanillaHealingAdjustment" = 0.5;
+        "IndividualProgression.TBCPowerAdjustment" = 0.5;
+        "IndividualProgression.TBCHealingAdjustment" = 0.5;
+        "IndividualProgression.RequireNaxxStrathEntrance" = 1;
+        "DBC.EnforceItemAttributes" = 0;
+        "EnablePlayerSettings" = 1;
+      })
       // (lib.optionalAttrs cfg.modules.playerbots.enable {
-        PlayerbotsDatabaseInfo = "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
+        "PlayerbotsDatabaseInfo" =
+          "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.modules.playerbots.databaseName}";
         "Playerbots.Updates.EnableDatabases" = 1;
         "AiPlayerbot.DisabledWithoutRealPlayer" = 1;
         "AiPlayerbot.MinRandomBots" = cfg.modules.playerbots.settings.minRandomBots;
