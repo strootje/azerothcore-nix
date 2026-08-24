@@ -1,9 +1,9 @@
-{ fetchFromGitHub, lib }:
+{ fetchFromGitHub }:
 
 fetchFromGitHub {
   owner = "lichborne-ac";
   repo = "mod-levelsync";
 
   rev = "27b50eb";
-  hash = lib.fakeHash;
+  hash = "sha256-1g/HCyXSofwNwz4zLOEYtUBUzaifbzwOmKD2HErmsjg=";
 }
