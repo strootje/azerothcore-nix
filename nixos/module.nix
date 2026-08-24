@@ -1009,6 +1009,21 @@ in
           );
         }
       ];
+
+      settings = {
+        mysqld = (
+          { }
+          // (lib.optionalAttrs cfg.modules.playerbots.enable {
+            skip-log-bin = true;
+            innodb_buffer_pool_size = "2G";
+            innodb_io_capacity = 500;
+            innodb_io_capacity_max = 2500;
+            innodb_log_file_size = "256M";
+            transaction_isolation = "READ-COMMITTED";
+            max_allowed_packet = "256M";
+          })
+        );
+      };
     };
 
     networking.firewall = {
