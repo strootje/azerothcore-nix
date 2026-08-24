@@ -241,7 +241,14 @@ in
         "CharacterDatabaseInfo" =
           "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
         # "Network.UseSocketActivation" = 1;
-        "Updates.EnableDatabases" = 0;
+
+        "Updates.AutoSetup" = 1;
+        "Updates.AllowedModules" = "all";
+        "Updates.EnableDatabases" = 15;
+        "Updates.Redundancy" = 1;
+        "Updates.ArchivedRedundancy" = 0;
+        "Updates.AllowRehash" = 1;
+        "Updates.CleanDeadRefMaxCount" = 3;
 
         "MySQLExecutable" = "${pkgs.mysql84}/bin/mysql";
         "SourceDirectory" = "${cfg.package}/sql-files";
@@ -1076,41 +1083,41 @@ in
       '';
     };
 
-    systemd.services.ac-dbimport = {
-      description = "AzerothCore DbImport";
+    # systemd.services.ac-dbimport = {
+    #   description = "AzerothCore DbImport";
 
-      wantedBy = [
-        "multi-user.target"
-      ];
+    #   wantedBy = [
+    #     "multi-user.target"
+    #   ];
 
-      restartTriggers = [
-        "/etc/azerothcore/dbimport.conf"
-      ];
+    #   restartTriggers = [
+    #     "/etc/azerothcore/dbimport.conf"
+    #   ];
 
-      requires = [
-        "mysql.service"
-        "ac-fix-dbuser.service"
-      ];
-      after = [
-        "mysql.service"
-        "ac-fix-dbuser.service"
-      ];
+    #   requires = [
+    #     "mysql.service"
+    #     "ac-fix-dbuser.service"
+    #   ];
+    #   after = [
+    #     "mysql.service"
+    #     "ac-fix-dbuser.service"
+    #   ];
 
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
+    #   serviceConfig = {
+    #     Type = "oneshot";
+    #     RemainAfterExit = true;
 
-        User = "acore";
-        Group = "acore";
+    #     User = "acore";
+    #     Group = "acore";
 
-        StateDirectory = "azerothcore";
-        WorkingDirectory = "/var/lib/azerothcore";
-        ExecStart = "${cfg.package}/bin/dbimport -c /etc/azerothcore/dbimport.conf";
+    #     StateDirectory = "azerothcore";
+    #     WorkingDirectory = "/var/lib/azerothcore";
+    #     ExecStart = "${cfg.package}/bin/dbimport -c /etc/azerothcore/dbimport.conf";
 
-        Restart = "on-failure";
-        RestartSec = 5;
-      };
-    };
+    #     Restart = "on-failure";
+    #     RestartSec = 5;
+    #   };
+    # };
 
     # systemd.sockets.ac-authserver = {
     #   wantedBy = [
@@ -1138,12 +1145,12 @@ in
       requires = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
       after = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
 
       wants = [
@@ -1194,12 +1201,12 @@ in
       requires = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
       after = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
 
       serviceConfig = {
