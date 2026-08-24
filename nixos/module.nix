@@ -36,6 +36,7 @@ let
 
       // (lib.optionalAttrs cfg.modules.individual-progression.enable {
         mod-individual-progression = (pkgs.callPackage ../pkgs/modules/individual-progression.nix { });
+        mod-levelsync = (pkgs.callPackage ../pkgs/modules/levelsync.nix { });
       })
 
       // (lib.optionalAttrs cfg.modules.ollama-chat.enable {
