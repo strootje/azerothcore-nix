@@ -196,6 +196,10 @@ in
         "Updates.AutoSetup" = 1;
         "Updates.AllowedModules" = "all";
         "Updates.EnableDatabases" = 15;
+        "Updates.Redundancy" = 1;
+        "Updates.ArchivedRedundancy" = 0;
+        "Updates.AllowRehash" = 1;
+        "Updates.CleanDeadRefMaxCount" = 3;
 
         "MySQLExecutable" = "${pkgs.mysql84}/bin/mysql";
         "SourceDirectory" = "${cfg.package}/sql-files";
@@ -1129,12 +1133,12 @@ in
       requires = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        # "ac-dbimport.service"
+        "ac-dbimport.service"
       ];
       after = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        # "ac-dbimport.service"
+        "ac-dbimport.service"
       ];
 
       wants = [
@@ -1185,12 +1189,12 @@ in
       requires = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        # "ac-dbimport.service"
+        "ac-dbimport.service"
       ];
       after = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        # "ac-dbimport.service"
+        "ac-dbimport.service"
       ];
 
       serviceConfig = {
