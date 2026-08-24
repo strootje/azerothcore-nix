@@ -1129,12 +1129,12 @@ in
       requires = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
       after = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
 
       wants = [
@@ -1185,12 +1185,12 @@ in
       requires = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
       after = [
         "mysql.service"
         "ac-fix-dbuser.service"
-        "ac-dbimport.service"
+        # "ac-dbimport.service"
       ];
 
       serviceConfig = {
