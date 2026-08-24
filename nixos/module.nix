@@ -14,7 +14,12 @@ let
     ''
       [${section}]
     ''
-    + lib.concatLines (lib.mapAttrsToList (name: value: "${name} = \"${toString value}\"") settings);
+    + lib.concatLines (
+      lib.mapAttrsToList (
+        name: value:
+        "${name} = ${(if builtins.isString value then "\"${value}\"" else "${toString value}")}"
+      ) settings
+    );
   databasePasswd = "acore";
 
   mkAzerothCore = pkgs.callPackage ../pkgs/acore.nix { };
