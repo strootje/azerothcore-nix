@@ -193,6 +193,7 @@ in
         "CharacterDatabaseInfo" =
           "${cfg.database.host};${toString cfg.database.port};${cfg.database.user};${databasePasswd};${cfg.database.characterDatabase}";
 
+        "Updates.AllowedModules" = "all";
         "MySQLExecutable" = "${pkgs.mysql84}/bin/mysql";
         "SourceDirectory" = "${cfg.package}/sql-files";
         "TempDir" = "/var/cache/azerothcore";
