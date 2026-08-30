@@ -149,6 +149,25 @@ in
 
   options.services.azerothcore.modules.individual-progression = {
     enable = lib.mkEnableOption "AzerothCore modIndividualProgression";
+
+    settings = {
+      vanillaPowerAdjustment = lib.mkOption {
+        type = lib.types.str;
+        default = "0.5";
+      };
+      vanillaHealingAdjustment = lib.mkOption {
+        type = lib.types.str;
+        default = "0.5";
+      };
+      tbcPowerAdjustment = lib.mkOption {
+        type = lib.types.str;
+        default = "0.5";
+      };
+      tbcHealingAdjustment = lib.mkOption {
+        type = lib.types.str;
+        default = "0.5";
+      };
+    };
   };
 
   options.services.azerothcore.modules.ollama-chat = {
@@ -288,10 +307,14 @@ in
       })
       // (lib.optionalAttrs cfg.modules.individual-progression.enable {
         "IndividualProgression.Enable" = 1;
-        "IndividualProgression.VanillaPowerAdjustment" = 0.5;
-        "IndividualProgression.VanillaHealingAdjustment" = 0.5;
-        "IndividualProgression.TBCPowerAdjustment" = 0.5;
-        "IndividualProgression.TBCHealingAdjustment" = 0.5;
+        "IndividualProgression.VanillaPowerAdjustment" =
+          cfg.modules.individual-progression.settings.vanillaPowerAdjustment;
+        "IndividualProgression.VanillaHealingAdjustment" =
+          cfg.modules.individual-progression.settings.vanillaHealingAdjustment;
+        "IndividualProgression.TBCPowerAdjustment" =
+          cfg.modules.individual-progression.settings.tbcPowerAdjustment;
+        "IndividualProgression.TBCHealingAdjustment" =
+          cfg.modules.individual-progression.settings.tbcHealingAdjustment;
         "IndividualProgression.RequireNaxxStrathEntrance" = 1;
         "DBC.EnforceItemAttributes" = 0;
         "EnablePlayerSettings" = 1;
